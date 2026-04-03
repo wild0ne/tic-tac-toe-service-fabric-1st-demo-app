@@ -53,3 +53,14 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# .vs
+.vs/**
+
+# binaries
+**/bin/**
+**/obj/**
+
+# packages
+packages/**
+**/pkg/**
