@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "TicTacToe\\TicTacToe.sfproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "PlayerApp\\TicTacToe.PlayerApp.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="TicTacToeType" ApplicationTypeVersion="1.0.41" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <Parameters>
+    <Parameter Name="TicTacToe.Watchdog_InstanceCount" DefaultValue="1" />
+    <Parameter Name="TicTacToe.Matching_MinReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="TicTacToe.Matching_PartitionCount" DefaultValue="1" />
+    <Parameter Name="TicTacToe.Matching_TargetReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="TicTacToe.Matching_ASPNETCORE_ENVIRONMENT" DefaultValue="" />
+    <Parameter Name="GameMasterActorService_PartitionCount" DefaultValue="1" />
+    <Parameter Name="GameMasterActorService_MinReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="GameMasterActorService_TargetReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="TicTacToe.Webapi_InstanceCount" DefaultValue="1" />
+  </Parameters>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="TicTacToe.WatchdogPkg" ServiceManifestVersion="1.0.7" />
+    <ConfigOverrides />
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="TicTacToe.GameMasterPkg" ServiceManifestVersion="1.0.0" />
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="TicTacToe.MatchingPkg" ServiceManifestVersion="1.0.4" />
+    <ConfigOverrides />
+    <EnvironmentOverrides CodePackageRef="code">
+      <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value="[TicTacToe.Matching_ASPNETCORE_ENVIRONMENT]" />
+    </EnvironmentOverrides>
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="TicTacToe.WebapiPkg" ServiceManifestVersion="1.0.29" />
+    <ConfigOverrides />
+  </ServiceManifestImport>
+  <DefaultServices>
+    <Service Name="TicTacToe.Watchdog" ServicePackageActivationMode="ExclusiveProcess">
+      <StatelessService ServiceTypeName="TicTacToe.WatchdogType" InstanceCount="[TicTacToe.Watchdog_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="TicTacToe.Matching" ServicePackageActivationMode="ExclusiveProcess">
+      <StatefulService ServiceTypeName="TicTacToe.MatchingType" TargetReplicaSetSize="[TicTacToe.Matching_TargetReplicaSetSize]" MinReplicaSetSize="[TicTacToe.Matching_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[TicTacToe.Matching_PartitionCount]" LowKey="0" HighKey="1000" />
+      </StatefulService>
+    </Service>
+    <Service Name="TicTacToe.Webapi" ServicePackageActivationMode="ExclusiveProcess">
+      <StatelessService ServiceTypeName="TicTacToe.WebapiType" InstanceCount="[TicTacToe.Webapi_InstanceCount]">
+        <SingletonPartition />
+      </StatelessService>
+    </Service>
+    <Service Name="GameMasterActorService" GeneratedIdRef="860c4b74-c43e-4e12-92a5-cafe78c6e9a5|Persisted">
+      <StatefulService ServiceTypeName="GameMasterActorServiceType" TargetReplicaSetSize="[GameMasterActorService_TargetReplicaSetSize]" MinReplicaSetSize="[GameMasterActorService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[GameMasterActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+      </StatefulService>
+    </Service>
+  </DefaultServices>
+</ApplicationManifest>
